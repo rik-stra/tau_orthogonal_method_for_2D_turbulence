@@ -1,0 +1,12 @@
+Input file for LF sim with online TO method 
+{"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":false , "dt_HF":0.01    , "t_start":0, "simulation_time":1000}
+{"sim_ID": "LF_TO", "time_integration_scheme": "RK4",
+"store_final_state": false, "store_qoi_trajectories": true,
+"restart": true, "restart_file_name": "pre_computed_data/restart/get_initial_conditions_t_300.0.hdf5",
+"parametrization": "TO", "dQ_discretization": "np1", "parametrization_file_path": "pre_computed_data/train_data_TO/LF_track_ref_rk4_t_4000.0.hdf5", "sample_independent" : false, "sample_domain": [200,1000,1], "use_MVG" : true}
+4
+{"target": "e", "V_i": "-psi_hat", "k_min": 0, "k_max": 15}
+{"target": "z", "V_i": "w_hat", "k_min": 0, "k_max": 15}
+{"target": "e", "V_i": "-psi_hat", "k_min": 16, "k_max": 21}
+{"target": "z", "V_i": "w_hat", "k_min": 16, "k_max": 21}
+0

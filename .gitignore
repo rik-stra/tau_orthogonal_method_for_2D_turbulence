@@ -1,0 +1,5 @@
+*/__pycache__*
+output/*
+figs/*
+pre_computed_data/*
+*/gridsearch/*

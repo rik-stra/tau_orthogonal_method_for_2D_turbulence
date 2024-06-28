@@ -1,0 +1,12 @@
+Input file for high fidelity simulation to get initial conditions
+{"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":false , "dt_HF":0.01    , "t_start":0, "simulation_time":300}
+{"sim_ID": "get_initial_conditions", "time_integration_scheme": "RK4",
+"store_final_state": true, "store_qoi_trajectories": true,
+"restart": false,
+"create_training_data":false}
+0
+4
+{"target": "e", "V_i": "-psi_hat", "k_min": 0, "k_max": 15}
+{"target": "z", "V_i": "w_hat", "k_min": 0, "k_max": 15}
+{"target": "e", "V_i": "-psi_hat", "k_min": 16, "k_max": 21}
+{"target": "z", "V_i": "w_hat", "k_min": 16, "k_max": 21}
