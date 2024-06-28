@@ -1,9 +1,22 @@
-# Implementation of smagorinsky model for vorticity formulation
+""" Implementation of smagorinsky model for vorticity formulation
+Author: Rik Hoekstra (18-06-2024)"""
 
 import torch
 from aux_code.filters import Grids, Filters
 
 def smag_parametrization(c_s, psi_hat_LF , filters:Filters , grid:Grids):
+    """
+    Calculates the smagorinsky parametrization for vorticity formulation.
+
+    Args:
+        c_s (float): Smagorinsky constant.
+        psi_hat_LF (torch.Tensor): Fourier transformed vorticity field.
+        filters (Filters): Object containing filter parameters.
+        grid (Grids): Object containing grid parameters.
+
+    Returns:
+        torch.Tensor: subgrid scale tendency.
+    """
     kx = grid.k_x_LF
     ky = grid.k_y_LF
     psi_xy = torch.fft.ifft2(kx*ky*psi_hat_LF).real

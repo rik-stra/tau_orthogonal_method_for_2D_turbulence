@@ -1,3 +1,9 @@
+"""
+File contains functions to store the data from the simulation in files:
+    - store_state: stores the state of the simulation in a file
+    - store_samples: stores the samples (QoI trajectories) in a file
+"""
+
 import numpy as np
 import os
 import h5py
