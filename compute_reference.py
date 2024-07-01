@@ -1,31 +1,38 @@
 """
 ========================================================================
 python script:
-Script to compute reference data with a high fidelity simulation.
-can also be used to create a training data set
-R. Hoekstra
+Script to perform a high fidelity simulation of a 2D turbulent flow using a pseudo-spectral method.
+Can be used to create training data sets in the form of:
+    - QoI trajectories for the TO method
+    - Filtered input and target fields for the CNN parametrization
 
+Input: 
+    - json file containing the input flags for the simulation
+    - run_number: integer, optional, for multiple runs with the same input file
+
+Output: (depending on input flags)
+    - hdf5 file containing the QoI trajectories
+    - hdf5 file containing the training data for the CNN
+    - hdf5 file containing the final state of the system (for restarts)
+
+Author: R. Hoekstra (1-7-2024)
 ========================================================================
 """
-
-from aux_code.functions_for_solver import *
-from aux_code.plot_store_functions import store_samples_hdf5, store_training_data_hdf5, store_state
-from aux_code.filters import Filters, Grids
-from aux_code.read_inputs import Inputs
-from aux_code.time_integrators import Solution_state
-from aux_code.initial_conditions import get_initial_conditions
-
-###########################
-# M A I N   P R O G R A M #
-###########################
-
 import numpy as np
 import torch
 import os
 import sys
-import json
 import time
 
+from aux_code.functions_for_solver import *
+from aux_code.plot_store_functions import store_samples_hdf5, store_training_data_hdf5, store_state
+from aux_code.read_inputs import Inputs
+from aux_code.time_integrators import Solution_state
+
+
+###########################
+# M A I N   P R O G R A M #
+###########################
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 HOME = os.path.abspath(os.path.dirname(__file__))
@@ -50,7 +57,7 @@ filters = input.filters
 Omega = 7.292*10**-5
 day = 24*60**2*Omega
 
-dt = input.dt_HF*day     #Note that we derive the low fidelity dt here, so the input file should still contain the high fidelity dt
+dt = input.dt_HF*day
 t = input.t_start*day
 t_end = t + input.simulation_time*day
 n_steps = int(np.round((t_end-t)/dt))
@@ -113,7 +120,6 @@ if input.create_training_data:
 
 #######  forcing term   ########################
 F_LF = 2**1.5*np.cos(5*grid.x_LF)*np.cos(5*grid.y_LF)
-#F_LF = 0*x_LF;
 F_hat_LF = np.fft.fft2(F_LF)
 F_hat_HF = np.zeros((grid.N_HF,grid.N_HF))+0.0j
 F_hat_HF[filters.P_HF2LF==1] = F_hat_LF[filters.P_LF==1]*(grid.N_HF/grid.N_LF)**2
@@ -132,7 +138,6 @@ if input.create_training_data:
 ######### put everything on the GPU ######
 # fields
 F_hat_HF= torch.from_numpy(F_hat_HF).to(device=device)
-
 
 # fields LF
 F_hat_LF= torch.from_numpy(F_hat_LF).to(device=device)
@@ -242,6 +247,7 @@ for n in range(n_steps):
             samples['w_hat_n_HF_filtered'][j] = filters.filter_LF2resolved(w_hat_n_HF_filtered).cpu()
             j += 1
     
+    ### store data for restart ###
     if (n==n_steps-10):
         w_hat_nm10_HF=filters.filter_HF2resolved(solution_state_HF.w_hat_n).cpu().numpy(force=True)
         if input.time_integration_scheme in ["RK4"]:

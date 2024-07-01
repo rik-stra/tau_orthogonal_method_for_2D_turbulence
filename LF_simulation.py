@@ -1,18 +1,50 @@
 """
 ========================================================================
 python script:
-Script to perform a low fidelity simulation.
-R. Hoekstra
+Script to perform a low fidelity simulation of a 2D turbulent flow using various SGS models.
+Implemented SGS models:
+- CNN parametrization
+- TO parametrization
+- Smagorinsky parametrization
+- hyper-viscosity
 
+Input: 
+    - json file containing the input flags for the simulation
+    - run_number: integer, optional, for multiple runs with the same input file
+
+Output: (depending on input flags)
+    - hdf5 file containing the QoI trajectories and some solution fields
+    - hdf5 file containing the final state of the simulation
+
+Short summary of the script:
+    - Read input from json file and set up grid and filters
+    - Set up time integration settings  (contains some hard-coded parameters)
+    - Define forcing term               (contains some hard-coded parameters)
+    - Define which data to store        (contains some hard-coded parameters)
+
+    - Initialize solution state
+    - Load refernce model / CNN parametrization / TO sampler
+    - Move data to GPU
+    - Time loop:
+        - Solve LF model
+        - Compute SGS term
+        - Update solution state
+        - Store QoI trajectories / solution fields
+    - Finalize simulation
+
+Author: Rik Hoekstra (1-7-2024)
 ========================================================================
 """
+import numpy as np
+import torch
+import os
+import sys
+import time
 
-from aux_code.functions_for_solver import ReferenceFile_reader, get_w_hat_np1, get_psi_hat, get_QHF_QLF, evaluate_expression_simple, get_QLF
+from aux_code.functions_for_solver import ReferenceFile_reader, get_psi_hat, get_QHF_QLF, evaluate_expression_simple, get_QLF
 from aux_code.plot_store_functions import store_samples_hdf5, store_state
-from aux_code.filters import Filters, Grids
 from aux_code.read_inputs import Inputs
 from aux_code.time_integrators import Solution_state
-
 from aux_code.to_parametrization import Dq_sampler, TO_masks, reduced_r_fast
 from aux_code.CNN_parametrization import Plain_CNN_surrogate
 from aux_code.smagorinsky_parametrization import smag_parametrization
@@ -21,17 +53,12 @@ from aux_code.smagorinsky_parametrization import smag_parametrization
 # M A I N   P R O G R A M #
 ###########################
 
-import numpy as np
-import torch
-import os
-import sys
-import time
-
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 HOME = '.'
 if os.path.exists(HOME+'/output') == False:
         os.makedirs(HOME+'/output')
-########### Open input file ############################
+
+#### Open input file ####
 #read flags from input file
 input_file_path = sys.argv[1]
 if len(sys.argv) ==3:
@@ -41,23 +68,21 @@ else: run_number = 0
 #### read input file ####
 input = Inputs(input_file_path, run_number)
 
-################################ set up grid and projection operators ################################################
+### set up grid and projection operators ###
 grid = input.grid
 filters = input.filters
 
-##############  Time integration settings  ##############
+###  Time integration settings  ###
 #time scale
 Omega = 7.292*10**-5
 day = 24*60**2*Omega
-
 #start, end time, time step
 dt = input.dt_HF*day*10      #Note that we derive the low fidelity dt here, so the input file should still contain the high fidelity dt
 t = input.t_start*day
 t_end = t + input.simulation_time*day
 n_steps = int(np.round((t_end-t)/dt))
 
-
-######### Set up parameters which depend on input flags ############################
+### Set up parameters which depend on input flags ###
 nu = 1.0/(day*(256//3)**2*input.decay_time_nu)
 if input.adapt_nu_to_LF :   # hyper viscosity
     nu_LF = 1.0/(day*filters.Ncutoff_LF**2*input.decay_time_nu)
@@ -65,15 +90,15 @@ else:
     nu_LF = nu
 mu = 1.0/(day*input.decay_time_mu)
 
+#######  forcing term   ########################
+F_LF = 2**1.5*np.cos(5*grid.x_LF)*np.cos(5*grid.y_LF)
+F_hat_LF = np.fft.fft2(F_LF)
+if filters.use_gaussian_filter: F_hat_LF *= filters.gaussian_filter
+##################################################
 
-#######################################################################################
-
-    
 ###############################
 # SPECIFY WHICH DATA TO STORE #
 ###############################
-
-
 data_to_store = ['Q_LF', 'w_hat_n_LF']
 if input.parametrization in ["TO","TO_track"]:
     data_to_store.append('tau')
@@ -107,32 +132,22 @@ if input.store_qoi_trajectories == True:
                 samples[data_to_store[q]] = np.zeros([S,input.N_Q_track])
 #######################################################################################
 
-#######  forcing term   ########################
-F_LF = 2**1.5*np.cos(5*grid.x_LF)*np.cos(5*grid.y_LF)
-F_hat_LF = np.fft.fft2(F_LF)
-if filters.use_gaussian_filter: F_hat_LF *= filters.gaussian_filter
-##################################################
-
 #########  inital conditions ######################
 solution_state = Solution_state(input.time_integration_scheme, t, dt, nu, mu, grid, "LF")
 solution_state.intialize_state(input, filters, grid, device)
-
 ####################################################
 
 ########### Load reference model ##################################################
-# the reference model (HF model) is not executed at the same time, load a
-# database containing the reference values for Q_i
 if input.parametrization == "TO_track":  # offline tracking
     ref_reader = ReferenceFile_reader(input.parametrization_file_path, input.N_Q_track ,index_permutation=input.ref_file_permutation, device=device)
 
-######### load base parametrization ########
+######### load CNN parametrization ########
 if input.parametrization in ['CNN']:
     NN_parametrization = Plain_CNN_surrogate(file_path=input.parametrization_file_path, device=device)
 
-######### load library for online tau prediction ######
+######### load sampler for online tau prediction ######
 if input.parametrization == "TO": 
     dQ_sampler = Dq_sampler(input.parametrization_file_path, device, independent_samples = input.sample_independent, sample_domain = input.sample_domain, use_MVG = input.use_MVG)
-
 
 ######### put everything on the GPU ######
 # fields
@@ -161,8 +176,9 @@ print('t_end = ', t_end/day, 'days')
 print('*********************')
 
 t0 = time.time()
-
-############ time loop  ########################
+##################
+### TIME LOOP  ###
+##################
 #some counters for storing data
 j = 0
 
@@ -191,15 +207,15 @@ for n in range(n_steps):
     if np.mod(n, 50*int(day/dt)) == 0:
         print(f'day =  {n//int(day/dt)} of  {n_steps//int(day/dt)}')
 
-    ########run the LF model#####################################################################
+    ########run the LF model###########
     #solve for next time step
 
     solution_state.time_step(F_hat_LF, sgs_func = sgs_func)
             
 
-    ####################################
+    ########################
     #### SGS models  #######
-    ####################################
+    ########################
 
     ####  CNN parametrization  #################################
     if (input.parametrization=="CNN") and (input.discretization_SGS_term ==2):
@@ -304,7 +320,6 @@ print('Simulation time =', t1 - t0, 'seconds')
 
 if input.parametrization == "TO_track": 
     ref_reader.close()
-
 
 if input.store_qoi_trajectories == True:
     # store last fields

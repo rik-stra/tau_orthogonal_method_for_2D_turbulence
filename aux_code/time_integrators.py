@@ -85,7 +85,7 @@ class Solution_state:
 
     def set_grid_and_filter(self, grid:Grids, filters:Filters):
         """
-        Read grid and filter data for secific fidelity.
+        Set grid and filter data for specific fidelity.
 
         Args:
         - grid (Grids): The grid object containing grid-related information.
