@@ -1,4 +1,4 @@
-Input file for low fidelity simulation 
+Input file for low fidelity simulation without SGS model
 {"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":false , "dt_HF":0.01, "t_start":0, "simulation_time":5000}
 {"sim_ID": "LF_rk4", "time_integration_scheme": "RK4",
 "store_final_state": false, "store_qoi_trajectories": true,

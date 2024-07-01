@@ -106,11 +106,11 @@ if input.parametrization in ["TO","TO_track"]:
 
 #allocate memory
 #framerate of storing data, plotting results (1 = every integration time step)
-store_frame_rate = 1                                #store every time step
-plot_frame_rate = np.floor(input.store_frame_rate*day/dt).astype('int') #plot every 10 days
+store_Q_rate = 1                                #store every time step
+plot_frame_rate = np.floor(input.store_frame_rate*day/dt).astype('int') 
  
 #length of data array
-S = np.floor(n_steps/store_frame_rate).astype('int')+1
+S = np.floor(n_steps/store_Q_rate).astype('int')+1
 S_fields = np.floor(n_steps/plot_frame_rate).astype('int')+2
 
 samples = {}

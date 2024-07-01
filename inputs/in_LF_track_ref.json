@@ -1,5 +1,5 @@
 Input file for LF sim which tracks reference trajectories with TO method
-{"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":false , "dt_HF":0.01    , "t_start":0, "simulation_time":4000}
+{"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":false , "dt_HF":0.01    , "t_start":0, "simulation_time":500}
 {"sim_ID": "LF_track_ref_rk4", "time_integration_scheme": "RK4",
 "store_final_state": false, "store_qoi_trajectories": true,
 "restart": true, "restart_file_name": "pre_computed_data/restart/get_initial_conditions_t_300.0.hdf5",

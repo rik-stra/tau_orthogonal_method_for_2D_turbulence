@@ -77,10 +77,10 @@ mu = 1.0/(day*input.decay_time_mu)
 
 #framerate of storing data, plotting results (1 = every integration time step)
 steps_per_day = np.floor(day/dt).astype('int')
-store_frame_rate = 10                                 # every 10th time step we store the QoIs
-plot_frame_rate = np.floor(input.store_frame_rate*day/dt).astype('int')  # every 100th day we store the solution
+store_Q_rate = 10                                 # every 10th time step we store the QoIs
+plot_frame_rate = np.floor(input.store_frame_rate*day/dt).astype('int')
 #length of data array
-S = np.floor(n_steps/store_frame_rate).astype('int')+1
+S = np.floor(n_steps/store_Q_rate).astype('int')+1
 S_fields = np.floor(n_steps/plot_frame_rate).astype('int')+2
 
 #TRAINING DATA SET
@@ -235,12 +235,12 @@ for n in range(n_steps):
     ###  Compute & store QoI to dictionary ###
     if input.store_qoi_trajectories == True:
         #calculate the QoI
-        if np.mod(n,store_frame_rate) == 0:
+        if np.mod(n,store_Q_rate) == 0:
             for i in range(input.N_Q_save):
                 Q_HF[i] = np.real(get_qoi(filters.apply_P_i(solution_state_HF.w_hat_n, i), filters.apply_P_i(solution_state_HF.psi_hat_n,i), 
                                 input.targets[i], grid.N_HF))
             for qoi in QoI_scalars:
-                samples[qoi][n//store_frame_rate] = eval(qoi)
+                samples[qoi][n//store_Q_rate] = eval(qoi)
         # store fields (once every plot_frame_rate)
         if np.mod(n,plot_frame_rate) == 0:
             w_hat_n_HF_filtered = filters.filter_HF2LF_torch(solution_state_HF.w_hat_n)
