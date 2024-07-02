@@ -40,7 +40,7 @@ class Dq_sampler:
                 dQ_data = torch.from_numpy(np.array(f[label])[:-1:10, :]).to(device)
         else:
             with h5py.File(file_name, 'r') as f:
-                dQ_data = torch.from_numpy(np.array(f[label][sample_domain[0]*100:sample_domain[1]*100:sample_domain[2], :])).to(device)
+                dQ_data = torch.from_numpy(np.array(f[label][sample_domain[0]:sample_domain[1]:sample_domain[2], :])).to(device)
 
         if use_MVG:
             mean_old = dQ_data.mean(axis=0)
