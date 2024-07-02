@@ -11,7 +11,7 @@
 runs_per_setup=10
 run_n=$(($SLURM_ARRAY_TASK_ID%$runs_per_setup+1))
 setup_n=$(($SLURM_ARRAY_TASK_ID/$runs_per_setup+1))
-sim_folder=rk4_new
+sim_folder=TO_new
 # call with 
 
 module load 2023
