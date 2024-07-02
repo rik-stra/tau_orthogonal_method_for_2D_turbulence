@@ -25,9 +25,9 @@ class Inputs:
     
     ### only needed for low fidelity simulations ####
     parametrization = 'none'
-    parametrization_file_path='none'; discretization_SGS_term=-99
+    parametrization_file_path='none'; discretization_SGS_term=1
         # for TO_track
-    ref_file_permutation= 'id'; dQ_discretization = "none"; relax_constant = 1
+    ref_file_permutation= 'id'; dQ_discretization = "np1"; relax_constant = 1.0
         # for TO
     sample_independent = False; sample_domain = "none"; use_MVG = False
         # for smag
