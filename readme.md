@@ -17,7 +17,7 @@ The "run_experiment.ipynb" notebook takes you step by step through the process o
 The "plot_convergence_of_distributions.ipynb" notebook contains the code to generate the figures that show the convergence of the distributions of the QoI and $\Delta Q_i$ (figure 5 in the paper).
 
 ## Precomputed data
-To get you started quickly, without the need to run the high-fidelity simulations, we provide precomputed data. You can download the data from [here](https://www.). Place in the pre_compute_data folder.
+To get you started quickly, without the need to run the high-fidelity simulations, we provide precomputed data. You can download the data from [will be available soon](). Place in the pre_compute_data folder.
 
 ## Dependencies
 This code uses PyTorch for the neural network and GPU acceleration. It can run both on GPU and CPU, altough the latter will be significantly slower. The code was tested with PyTorch ... and Python ....
