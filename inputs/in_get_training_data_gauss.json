@@ -1,7 +1,7 @@
 Input file for high fidelity simulation to get reference data and training data using a Gaussian filter in the LF simulations
-{"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":true , "dt_HF":0.01    , "t_start":0, "simulation_time":3000}
+{"N_HF":257, "N_LF":65, "remove_alias":true, "use_gaussian_filter":true , "dt_HF":0.01    , "t_start":0, "simulation_time":5000}
 {"sim_ID": "train_data_gauss", "time_integration_scheme": "RK4",
-"store_final_state": false, "store_qoi_trajectories": true, "store_frame_rate":100,
+"store_final_state": true, "store_qoi_trajectories": true, "store_frame_rate":100,
 "restart": true, "restart_file_name": "pre_computed_data/restart/get_initial_conditions_t_300.0.hdf5",
 "create_training_data":true}
 0
