@@ -1,17 +1,17 @@
 #!/bin/bash
 #SBATCH -J array_job
-#SBATCH --array=0-159
+#SBATCH --array=0-199
 #SBATCH -t 45:00
 #SBATCH -p gpu
-#SBATCH --partition=gpu_mig
+#SBATCH --partition=gpu
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=9
+#SBATCH --cpus-per-task=18
 #SBATCH --gpus=1
 
 runs_per_setup=10
 run_n=$(($SLURM_ARRAY_TASK_ID%$runs_per_setup+1))
 setup_n=$(($SLURM_ARRAY_TASK_ID/$runs_per_setup+1))
-sim_folder=rk4_new
+sim_folder=gridsearchCNN
 # call with 
 
 module load 2023
