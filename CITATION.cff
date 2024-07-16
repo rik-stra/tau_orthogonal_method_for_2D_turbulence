@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Hoekstra"
+  given-names: "Rik"
+  orcid: "https://orcid.org/0009-0006-5531-632X"
+title: "tau_orthogonal_method_for_2D_turbulence"
+version: v0.1
+date-released: 2024-07-16
+url: "https://github.com/rik-stra/tau_orthogonal_method_for_2D_turbulence"
