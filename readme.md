@@ -3,7 +3,7 @@
 Code accompanying the paper "Reduced Data-Driven Turbulence Closure for Capturing Long-Term Statistics"
 
 ## Abstract
-We introduce a simple, stochastic, _a-posteriori_, turbulence closure model based on a reduced subgrid scale term. This subgrid scale term is tailor-made to capture the statistics of a small set of spatially-integrate quantities of interest (QoIs), with only one unresolved scalar time series per QoI. In contrast to other data-driven surrogates the dimension of the ``learning problem" is reduced from an evolving field to one scalar time series per QoI. We use an _a-posteriori_, nudging approach to find the distribution of the scalar series over time. This approach has the advantage of taking the interaction between the solver and the surrogate into account, but does not require the solver to be differentiable. A stochastic surrogate parametrization is obtained by random sampling from the found distribution for the scalar time series. Compared to an _a-priori_ trained convolutional neural network, the new method gives similar long term statistics at much lower computational costs.
+We introduce a simple, stochastic, _a-posteriori_, turbulence closure model based on a reduced subgrid scale term. This subgrid scale term is tailor-made to capture the statistics of a small set of spatially-integrate quantities of interest (QoIs), with only one unresolved scalar time series per QoI. In contrast to other data-driven surrogates the dimension of the ``learning problem" is reduced from an evolving field to one scalar time series per QoI. We use an _a-posteriori_, nudging approach to find the distribution of the scalar series over time. This approach has the advantage of taking the interaction between the solver and the surrogate into account. A stochastic surrogate parametrization is obtained by random sampling from the found distribution for the scalar time series. Compared to an _a-priori_ trained convolutional neural network, the new method gives similar long term statistics at much lower computational costs.
 
 ## Contents of this repository
 This project contains the implementations of three subgrid parametrizations for the **forced barotropic vorticity equation**. This equation is solved using a pseudo-spectral method.
@@ -17,10 +17,10 @@ The "run_experiment.ipynb" notebook takes you step by step through the process o
 The "plot_convergence_of_distributions.ipynb" notebook contains the code to generate the figures that show the convergence of the distributions of the QoI and $\Delta Q_i$ (figure 5 in the paper).
 
 ## Precomputed data
-To get you started quickly, without the need to run the high-fidelity simulations, we provide precomputed data. You can download the data from [will be available soon](). Place this in the pre_computed_data folder.
+To get you started quickly, without the need to run the high-fidelity simulations, we provide precomputed data. You can download the data from [Zenodo](https://zenodo.org/records/12745085). Place this in the pre_computed_data folder.
 
 ## Dependencies
-This code uses PyTorch for the neural network and GPU acceleration. It can run both on GPU and CPU, altough the latter will be significantly slower. The code was tested with PyTorch ... and Python ....
+This code uses PyTorch for the neural network and GPU acceleration. It can run both on GPU and CPU, although the latter will be significantly slower. The code was tested with Python 3.9.17 and PyTorch 2.0.1.
 
 ## Input files
 Both "compute_reference.py" and "LF_simulation.py" use the same input file format. All input files needed for the experiments are provided in the "inputs" folder.
