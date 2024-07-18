@@ -8,3 +8,6 @@ authors:
   - given-names: Rik
     family-names: Hoekstra
     orcid: 'https://orcid.org/0009-0006-5531-632X'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.12750289
