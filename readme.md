@@ -3,7 +3,7 @@
 Code accompanying the paper "Reduced Data-Driven Turbulence Closure for Capturing Long-Term Statistics"
 
 ## Abstract
-We introduce a simple, stochastic, _a-posteriori_, turbulence closure model based on a reduced subgrid scale term. This subgrid scale term is tailor-made to capture the statistics of a small set of spatially-integrate quantities of interest (QoIs), with only one unresolved scalar time series per QoI. In contrast to other data-driven surrogates the dimension of the ``learning problem" is reduced from an evolving field to one scalar time series per QoI. We use an _a-posteriori_, nudging approach to find the distribution of the scalar series over time. This approach has the advantage of taking the interaction between the solver and the surrogate into account. A stochastic surrogate parametrization is obtained by random sampling from the found distribution for the scalar time series. Compared to an _a-priori_ trained convolutional neural network, the new method gives similar long term statistics at much lower computational costs.
+We introduce a simple, stochastic, _a-posteriori_, turbulence closure model based on a reduced subgrid scale term. This subgrid scale term is tailor-made to capture the statistics of a small set of spatially-integrate quantities of interest (QoIs), with only one unresolved scalar time series per QoI. In contrast to other data-driven surrogates the dimension of the ``learning problem" is reduced from an evolving field to one scalar time series per QoI. We use an _a-posteriori_, nudging approach to find the distribution of the scalar series over time. This approach has the advantage of taking the interaction between the solver and the surrogate into account. A stochastic surrogate parametrization is obtained by random sampling from the found distribution for the scalar time series. Compared to an _a-priori_ trained convolutional neural network, the new method gives similar long-term statistics at much lower computational costs.
 
 ## Contents of this repository
 This project contains the implementations of three subgrid parametrizations for the **forced barotropic vorticity equation**. This equation is solved using a pseudo-spectral method.
@@ -41,7 +41,7 @@ Input files have the following format:
     - "decay_time_mu" (= 90.0): relaxation decay time (determines $\mu$),
     - "time_integration_scheme" (= "RK4"): time integration scheme (either "RK4" Runge-Kutta 4th order or "AB/BDI2" for Adams-Bashforth/Backward-Differentiation 2nd order),
     - "sim_ID" (= "none"): name used for output files,
-    - "adapt_nu_to_LF" (= False): adapt the viscosity to the low-fidelity simulation, resulting in a hyper-viscossity model, 
+    - "adapt_nu_to_LF" (= False): adapt the viscosity to the low-fidelity simulation, resulting in a hyper-viscosity model, 
     - "store_qoi_trajectories" (= True)
     - "store_final_state" (= False): store the final state of the simulation for a restart,
     - "restart" (= True): restart the simulation,
